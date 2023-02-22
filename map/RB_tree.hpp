@@ -77,8 +77,12 @@ class RB_tree{
 
 		iterator	start = iterator(other._begin, other.nil, other.root);
 		iterator	end = iterator(other._end, other.nil, other.root);
+
 		while (start != end)
+		{
 			insert_node(*start++);
+			std::cout << start->first << std::endl; //3번째 인자가 들어올때 오류발생 -> 확인하기
+		}
 		// insert(other.begin(), other.end());
 		real_alloc = other.real_alloc;
 		_alloc = other._alloc;
