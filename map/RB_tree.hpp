@@ -81,7 +81,7 @@ class RB_tree{
 		while (start != end)
 		{
 			insert_node(*start++);
-			std::cout << start->first << std::endl; //3번째 인자가 들어올때 오류발생 -> 확인하기
+			// std::cout << start->first << std::endl; //3번째 인자가 들어올때 오류발생 -> 확인하기
 		}
 		// insert(other.begin(), other.end());
 		real_alloc = other.real_alloc;
@@ -104,6 +104,7 @@ class RB_tree{
 	{
 		node_pointer	ret = real_alloc.allocate(1);
 		_alloc.construct(&(ret->value), pair);
+		ret->parent = NULL;
 		ret->left = nil;
 		ret->right = nil;
 		ret->red_black = RED;
