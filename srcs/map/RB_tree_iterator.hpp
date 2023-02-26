@@ -27,10 +27,10 @@ class	tree_iterator{
 
 	private:
 	node_pointer		_node;
-
-	public:
 	node_pointer		_nil;
 	node_pointer		_root;
+
+	public:
 	
 
 	public:
@@ -167,16 +167,15 @@ class	const_tree_iterator{
 
 	private:
 	node_pointer		_node;
-
-	public:
 	node_pointer		_nil;
 	node_pointer		_root;
+
+	public:
 	
 	public:
 	const_tree_iterator() : _node(), _nil(), _root() {}
 	const_tree_iterator(node_pointer node, node_pointer nil, node_pointer root): _node(node), _nil(nil), _root(root) {}
 	
-
 	const_tree_iterator(const tree_iterator<_pair>& other) : _node(other.base()), _nil(other._nil), _root(other._root) {}
 	~const_tree_iterator() {}
 	

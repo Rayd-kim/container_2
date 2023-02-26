@@ -21,25 +21,23 @@ int		main(void)
 	TESTED_NAMESPACE::map<T1, T2> mp(lst.begin(), lst.end()), mp2;
 	TESTED_NAMESPACE::map<T1, T2>::iterator it;
 
-	std::cout << mp.max_size() << std::endl;
-	std::cout << mp2.max_size() << std::endl;
-	// lst.clear();
-	// is_empty(mp);
-	// printSize(mp);
+	lst.clear();
+	is_empty(mp);
+	printSize(mp);
 
-	// is_empty(mp2);
-	// mp2 = mp;
-	// is_empty(mp2);
+	is_empty(mp2);
+	mp2 = mp;
+	is_empty(mp2);
 
-	// it = mp.begin();
-	// for (unsigned long int i = 3; i < mp.size(); ++i)
-	// 	it++->second = i * 7;
+	it = mp.begin();
+	for (unsigned long int i = 3; i < mp.size(); ++i)
+		it++->second = i * 7;
 
-	// printSize(mp);
-	// printSize(mp2);
+	printSize(mp);
+	printSize(mp2);
 
-	// mp2.clear();
-	// is_empty(mp2);
-	// printSize(mp2);
+	mp2.clear();
+	is_empty(mp2);
+	printSize(mp2);
 	return (0);
 }
