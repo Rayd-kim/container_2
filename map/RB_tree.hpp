@@ -24,9 +24,7 @@ class RB_tree{
 	private:
 		size_type	_size;
 
-	public:
 	node_pointer	root;
-	node_pointer	insert_temp;
 	node_pointer	nil;
 	node_pointer	_begin;
 	node_pointer	_end;
@@ -34,7 +32,17 @@ class RB_tree{
 	key_compare		_comp;
 	Alloc			_alloc;
 
-	RB_tree() : root(NULL), insert_temp(NULL), _comp(Compare()), _alloc(Allocator())
+	public:
+	// RB_tree() : root(NULL), _comp(Compare()), _alloc(Allocator())
+	// {
+	// 	nil = create_nil_node();
+
+	// 	_begin = nil;
+	// 	_end = nil;
+	// 	_size = 0;
+	// }
+
+	RB_tree(const Compare& comp, const Allocator& alloc = Allocator()) : root(NULL), _comp(comp), _alloc(alloc)
 	{
 		nil = create_nil_node();
 
@@ -43,16 +51,7 @@ class RB_tree{
 		_size = 0;
 	}
 
-	RB_tree(const Compare& comp, const Allocator& alloc = Allocator()) : root(NULL), insert_temp(NULL), _comp(comp), _alloc(alloc)
-	{
-		nil = create_nil_node();
-
-		_begin = nil;
-		_end = nil;
-		_size = 0;
-	}
-
-	RB_tree(const RB_tree& other) : root(NULL), insert_temp(NULL), _comp(other._comp), _alloc(other._alloc)
+	RB_tree(const RB_tree& other) : root(NULL), _comp(other._comp), _alloc(other._alloc)
 	{
 		nil = create_nil_node();
 		_begin = nil;
@@ -74,19 +73,17 @@ class RB_tree{
 	RB_tree&	operator=(const RB_tree& other)
 	{
 		clear();
+		real_alloc.deallocate(nil, 1);
 
-		iterator	start = iterator(other._begin, other.nil, other.root);
-		iterator	end = iterator(other._end, other.nil, other.root);
-
-		while (start != end)
-		{
-			insert_node(*start++);
-			// std::cout << start->first << std::endl; //3번째 인자가 들어올때 오류발생 -> 확인하기
-		}
-		// insert(other.begin(), other.end());
 		real_alloc = other.real_alloc;
 		_alloc = other._alloc;
 		_comp = other._comp;
+		nil = real_alloc.allocate(1);
+
+		iterator	start = iterator(other._begin, other.nil, other.root);
+		iterator	end = iterator(other._end, other.nil, other.root);
+		while (start != end)
+			insert_node(*start++);
 		return (*this);
 	}
 	node_pointer create_nil_node()
@@ -104,6 +101,7 @@ class RB_tree{
 	{
 		node_pointer	ret = real_alloc.allocate(1);
 		_alloc.construct(&(ret->value), pair);
+
 		ret->parent = NULL;
 		ret->left = nil;
 		ret->right = nil;
@@ -111,39 +109,37 @@ class RB_tree{
 
 		if (_begin == nil)
 			_begin = ret;
-		else if (_comp(pair.first, _begin->value.first))
+		else if (_comp(pair, _begin->value))
 			_begin = ret;
 		return (ret);
 	}
 
 	ft::pair<iterator, bool>	insert_node(const value_type& pair)
 	{
-
 		if (root == NULL)
 		{
 			root = create_new_node(pair);
 			root->red_black = BLACK;
-			insert_temp = root;
 			_size++;
 			return ft::make_pair(iterator(root, nil, root), true);
 		}
 
 		node_pointer	ret = root;
-		node_pointer	parent = NULL;
+		node_pointer	parent;
 
 		while (ret != nil)
 		{
 			parent = ret;
-			if (_comp(pair.first, ret->value.first))
+			if (_comp(pair, ret->value))
 				ret = ret->left;
-			else if (_comp(ret->value.first, pair.first))
+			else if (_comp(ret->value, pair))
 				ret = ret->right;
 			else
 				return ft::make_pair(iterator(ret, nil, root), false);
 		}
 		ret = create_new_node(pair);
 		ret->parent = parent;
-		if (_comp(pair.first, parent->value.first))
+		if (_comp(pair, parent->value))
 			parent->left = ret;
 		else
 			parent->right = ret;
@@ -151,32 +147,6 @@ class RB_tree{
 		_size++;
 		return ft::make_pair(iterator(ret, nil, root), true);
 	}
-
-	void	insert(iterator first, iterator last)
-	{
-		while (first != last)
-			insert_node(*first++);
-	}
-
-	void	inored_node(node_pointer root)
-	{
-		if (root == NULL || root == nil)
-			return ;
-		inored_node(root->left);
-		std::cout << "key: " << root->value.first << " value :" << root->value.second << std::endl;
-		inored_node(root->right);
-	}
-
-	node_pointer	min()
-	{
-		node_pointer	temp = root;
-		if (temp == NULL)
-			return nil;
-		while (temp->left != nil)
-			temp = temp->left;
-		return temp;
-	}
-
 	node_pointer	max()
 	{
 		node_pointer	temp = root;
@@ -186,7 +156,6 @@ class RB_tree{
 			temp = temp->right;
 		return temp;
 	}
-
 	node_pointer	Leftmost(node_pointer node)
 	{
 		if (node == nil)
@@ -195,7 +164,6 @@ class RB_tree{
 			node = node->left;
 		return node;
 	}
-
 	node_pointer	Rightmost(node_pointer node)
 	{
 		if (node == nil)
@@ -204,7 +172,6 @@ class RB_tree{
 			node = node->right;
 		return node;
 	}
-
 	node_pointer	next_node(node_pointer node)
 	{
 		if (node == nil) //end()일 때?
@@ -228,7 +195,6 @@ class RB_tree{
 			return nil;
 		return parent;
 	}
-
 	node_pointer	prev_node(node_pointer node)
 	{
 		if (node == nil) //node == end일 때
@@ -252,12 +218,6 @@ class RB_tree{
 			return nil;
 		return parent;
 	}
-
-	void	print_tree()
-	{
-		inored_node(root);
-	}
-
 	void	left_rotate(node_pointer node)
 	{
 		node_pointer	temp_parent;
@@ -267,11 +227,14 @@ class RB_tree{
 		temp_parent = node->parent->parent; //parent->parent save
 
 		node->parent->right = node_left; //현재 노드의 부모노드의 오른쪽 노드를 현재 노드의 왼쪽으로 변경 
-		node_left->parent = node->parent;
+		if (node_left != nil)
+			node_left->parent = node->parent;
 
 		node->left = node->parent; // 현재 노드의 왼쪽이 부모노드를 가리키도록 변경
-		node->left->parent = node; // 원래 부모노드가 현재노드의 왼쪽으로 변경되었으므로, 원래 부모노드의 부모노드를 현재노드로 변경
-		node->parent = temp_parent; // 현재노드의 부모노드를 원래의 부모의 부모노드로 변경
+		if (node->left != nil)
+			node->left->parent = node; // 원래 부모노드가 현재노드의 왼쪽으로 변경되었으므로, 원래 부모노드의 부모노드를 현재노드로 변경
+		if (node != nil)
+			node->parent = temp_parent; // 현재노드의 부모노드를 원래의 부모의 부모노드로 변경
 
 
 		if (node->parent == NULL) //root node일 때
@@ -284,7 +247,6 @@ class RB_tree{
 				node->parent->left = node;
 		}
 	}
-
 	void	right_rotate(node_pointer node)
 	{
 		node_pointer	temp_parent;
@@ -295,11 +257,14 @@ class RB_tree{
 		temp_parent = node->parent->parent; // 현재부모노드의 부모노드(조부모노드)를 저장
 
 		node->parent->left = node_right; // 부모노드의 왼쪽노드(현재노드임)를 현재노드의 오른쪽으로 변경
-		node_right->parent = node->parent;
+		if (node_right != nil)
+			node_right->parent = node->parent;
 
 		node->right = node->parent; // 현재 노드의 오른쪽이 부모노드를 가리키도록 변경
-		node->right->parent = node;
-		node->parent = temp_parent;
+		if (node->right != nil)
+			node->right->parent = node;
+		if (node != nil)
+			node->parent = temp_parent;
 
 
 		if (node->parent == NULL)
@@ -312,7 +277,6 @@ class RB_tree{
 				node->parent->left = node;
 		}
 	}
-
 	void	red_black_check(node_pointer node)
 	{
 		if (node->parent == NULL) //node is root
@@ -338,7 +302,7 @@ class RB_tree{
 				}
 				else if (node_grand_parent->right->red_black == BLACK && node == node_parent->right) //삼촌노드가 블랙이고, 자식이 부모의 오른쪽일때
 				{
-					left_rotate(node_parent);
+					left_rotate(node);
 					red_black_check(node->left);
 				}
 				else
@@ -347,7 +311,6 @@ class RB_tree{
 					node_grand_parent->red_black = RED;
 					right_rotate(node_parent);
 				}
-
 			}
 			else //현재 노드가 부모의 오른쪽기준일 때
 			{
@@ -361,14 +324,13 @@ class RB_tree{
 					node_grand_parent->red_black = RED;
 					red_black_check(node_grand_parent);
 				}
-				else if (node_grand_parent->left->red_black == BLACK && node == node_parent->left) //삼촌노드가 블랙이고, 자식이 부모의 오른쪽일때
+				else if (node_grand_parent->left->red_black == BLACK && node == node_parent->left) //삼촌노드가 블랙이고, 자식이 부모의 왼쪽일때
 				{
-					right_rotate(node_parent);
+					right_rotate(node);
 					red_black_check(node->right);
 				}
 				else
 				{
-					// std::cout << _size << "  map size " << node_parent->value.first << std::endl;
 					node_parent->red_black = BLACK;
 					node_grand_parent->red_black = RED;
 					left_rotate(node_parent);
@@ -376,23 +338,21 @@ class RB_tree{
 			}	
 		}
 	}
-
 	node_pointer	search_key(const _pair& pair) const
 	{
 		node_pointer	ret = root;
 
 		while (ret != nil && ret != NULL)
 		{
-			if (_comp(pair.first, ret->value.first))
+			if (_comp(pair, ret->value))
 				ret = ret->left;
-			else if (_comp(ret->value.first, pair.first))
+			else if (_comp(ret->value, pair))
 				ret = ret->right;
 			else
 				return (ret);
 		}
 		return (nil);
 	}
-
 	node_pointer	search_successor(node_pointer node)
 	{
 		node_pointer	successor;
@@ -404,7 +364,6 @@ class RB_tree{
 		}
 		return successor;
 	}
-
 	void	transplant(node_pointer before, node_pointer after)
 	{
 		if (before->parent == NULL)
@@ -416,7 +375,6 @@ class RB_tree{
 		
 		after->parent = before->parent;
 	}
-
 	void	delete_node(const _pair& pair)
 	{
 		node_pointer	node = search_key(pair);
@@ -467,13 +425,11 @@ class RB_tree{
 				
 			_alloc.destroy(&(node->value));
 			real_alloc.deallocate(node, 1);
-		 	// delete node;
 			_size--;
 		}
 		nil->parent = NULL;
 		if (root == nil)
 			root = NULL;
-		insert_temp = root;
 	}
 
 	void	fixed_up_rb_tree(node_pointer extra_b)
@@ -530,8 +486,6 @@ class RB_tree{
 				{
 					bro->red_black = RED;
 					extra_b = extra_b->parent;
-					// std::cout << extra_b->value.first << std::endl;
-					// printf("ok\n");
 				}
 				else
 				{
@@ -568,6 +522,7 @@ class RB_tree{
 	}
 	size_type	max_size() const
 	{
+		// return std::numeric_limits<size_type>::max();
 		// return real_alloc.max_size();
 		return (std::numeric_limits<size_type>::max() / sizeof(node_type));
 	}
@@ -592,7 +547,6 @@ class RB_tree{
 		}
 		return (begin);
 	}
-
 	size_type	count(const value_type& value) const
 	{
 		node_pointer	node = search_key(value);
@@ -601,7 +555,6 @@ class RB_tree{
 			return (0);
 		return (1);
 	}
-
 	void	clear()
 	{
 		node_pointer	next, remove;
@@ -615,24 +568,6 @@ class RB_tree{
 			next = next_node(remove);
 		}
 	}
-
-	// void	clear(node_pointer node)
-	// {
-	// 	if (node != nil && node != NULL)
-	// 	{
-	// 		clear(node->left);
-	// 		clear(node->right);
-	// 		_alloc.destroy(&(node->value));
-	// 		real_alloc.deallocate(node, 1);
-	// 		_size--;
-	// 	}
-	// 	if (_size == 0)
-	// 	{
-	// 		_begin = nil;
-	// 		root = NULL;
-	// 	}
-	// }
-	
 	size_type	erase(const value_type& value)
 	{
 		node_pointer	remove = search_key(value);
@@ -642,11 +577,9 @@ class RB_tree{
 		delete_node(value);
 		return (1);
 	}
-
 	void	swap(RB_tree& other)
 	{
 		ft::swap (root, other.root);
-		ft::swap (insert_temp, other.insert_temp);
 		ft::swap (nil, other.nil);
 		ft::swap (_begin, other._begin);
 		ft::swap (_end, other._end);
@@ -655,25 +588,14 @@ class RB_tree{
 		ft::swap (real_alloc, other.real_alloc);
 		ft::swap (_size, other._size);
 	}
-
-	iterator	begin()
-	{
-		return (iterator(min(), nil, root));
-	}
-	const_iterator	begin() const
-	{
-		return (iterator(min(), nil, root));
-	}
-	
-
-	iterator	end()
-	{
-		return iterator(nil, nil, root);
-	}
-	const_iterator	end()	const
-	{
-		return iterator(nil, nil, root);
-	}
+	node_pointer	get_nil() const
+	{	return (nil);	}
+	node_pointer	get_root() const
+	{	return (root);	}
+	node_pointer	get_begin() const
+	{	return (_begin);	}
+	node_pointer	get_end() const
+	{	return (_end);	}
 };
 
 #endif

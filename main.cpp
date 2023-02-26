@@ -7,9 +7,9 @@
 	#include <vector>
 	namespace ft = std;
 #else
-	#include <map.hpp>
-	#include <stack.hpp>
-	#include <vector.hpp>
+	#include <stack>
+	#include "./map/map.hpp"
+	#include "./vector/vector.hpp"
 #endif
 
 #include <stdlib.h>
@@ -26,7 +26,7 @@ struct Buffer
 #define COUNT (MAX_RAM / (int)sizeof(Buffer))
 
 template<typename T>
-class MutantStack : public ft::stack<T>
+class MutantStack : public std::stack<T>
 {
 public:
 	MutantStack() {}
@@ -38,7 +38,7 @@ public:
 	}
 	~MutantStack() {}
 
-	typedef typename ft::stack<T>::container_type::iterator iterator;
+	typedef typename std::stack<T>::container_type::iterator iterator;
 
 	iterator begin() { return this->c.begin(); }
 	iterator end() { return this->c.end(); }
@@ -57,9 +57,9 @@ int main(int argc, char** argv) {
 
 	ft::vector<std::string> vector_str;
 	ft::vector<int> vector_int;
-	ft::stack<int> stack_int;
+	std::stack<int> stack_int;
 	ft::vector<Buffer> vector_buffer;
-	ft::stack<Buffer, std::deque<Buffer> > stack_deq_buffer;
+	std::stack<Buffer, std::deque<Buffer> > stack_deq_buffer;
 	ft::map<int, int> map_int;
 
 	for (int i = 0; i < COUNT; i++)
@@ -87,12 +87,12 @@ int main(int argc, char** argv) {
 	{
 		//NORMAL ! :P
 	}
-	
+	printf("add\n");
 	for (int i = 0; i < COUNT; ++i)
 	{
 		map_int.insert(ft::make_pair(rand(), rand()));
 	}
-
+	printf("end\n");
 	int sum = 0;
 	for (int i = 0; i < 10000; i++)
 	{

@@ -25,7 +25,19 @@ class map{
 	typedef	typename Allocator::difference_type		difference_type;
 	// typedef	tree_iterator<value_type>				iterator;
 	// typedef	tree_iterator<const value_type>			const_iterator;
-	typedef	RB_tree<value_type, key_compare, Allocator>	rb_tree;
+	class value_compare{
+		protected:
+			Compare comp;
+			value_compare(Compare c) : comp(c) {}
+
+		public:		
+			bool operator()(const value_type& lhs, const value_type& rhs) const{
+				return comp(lhs.first, rhs.first);
+			}
+		friend	class map;
+	};
+	
+	typedef	RB_tree<value_type, value_compare, Allocator>	rb_tree;
 
 	typedef	typename rb_tree::iterator				iterator;
 	typedef	typename rb_tree::const_iterator		const_iterator;
@@ -41,10 +53,10 @@ class map{
 		allocator_type	_alloc;
 
 	//constructor & destructor
-	map() : _tree() , _comp(Compare()), _alloc(Allocator()){};
+	// map() : _tree() , _comp(Compare()), _alloc(Allocator()){};
 	~map() {};
 
-	explicit map(const Compare& comp, const Allocator& alloc = Allocator() )
+	explicit map(const Compare& comp = Compare(), const Allocator& alloc = Allocator() )
 	: _tree(rb_tree(comp, alloc)), _comp(comp), _alloc(alloc){};
 	
 	template<class InputIt>
@@ -196,17 +208,7 @@ class map{
 	}
 	
 
-	class value_compare{
-		protected:
-			Compare comp;
-			value_compare(Compare c) : comp(c) {}
-
-		public:		
-			bool operator()(const value_type& lhs, const value_type& rhs) const{
-				return comp(lhs.first, rhs.first);
-			}
-		friend	class map;
-	};
+	
 	
 	key_compare	key_comp() const
 	{	return _comp;	}
@@ -215,13 +217,13 @@ class map{
 	{	return value_compare(_comp);	}
 
 	iterator	begin()
-	{	return iterator(_tree._begin, _tree.nil, _tree.root);	}
+	{	return iterator(_tree.get_begin(), _tree.get_nil(), _tree.get_root());	}
 	iterator	end()
-	{	return iterator(_tree._end, _tree.nil, _tree.root);	}
+	{	return iterator(_tree.get_end(), _tree.get_nil(), _tree.get_root());	}
 	const_iterator	begin() const
-	{	return const_iterator(_tree._begin, _tree.nil, _tree.root);	}
+	{	return const_iterator(_tree.get_begin(), _tree.get_nil(), _tree.get_root());	}
 	const_iterator	end() const
-	{	return const_iterator(_tree._end, _tree.nil, _tree.root);	}
+	{	return const_iterator(_tree.get_end(), _tree.get_nil(), _tree.get_root());	}
 	reverse_iterator	rbegin()
 	{	return reverse_iterator(end());	}
 	reverse_iterator	rend()
@@ -233,6 +235,7 @@ class map{
 
 };
 
+//non-member function
 template <typename Key, typename T, typename Compare, typename Alloc>
 bool	operator==(const ft::map<Key, T, Compare, Alloc>& lhs, const ft::map<Key, T, Compare, Alloc>& rhs)
 {

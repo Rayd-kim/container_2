@@ -4,31 +4,33 @@
 #define RED 			1
 #define BLACK			2
 
+#include <iostream>
+
 template <typename _pair>
 struct Node {
-	public:
+	// public:
 	_pair	value;
 	Node	*parent;
 	Node	*left;
 	Node	*right;
 	int		red_black;
 
-	Node() : parent(NULL), left(NULL), right(NULL), red_black(BLACK)//leaf node(nil_node) 생성
-	{}
+	// Node() : parent(NULL), left(NULL), right(NULL), red_black(BLACK)//leaf node(nil_node) 생성
+	// {}
 	
-	Node(_pair pair) : value(pair), parent(NULL), left(NULL), right(NULL), red_black(RED) //일반 insert때의 노드 생성
-	{}
+	// Node(_pair pair) : value(pair), parent(NULL), left(NULL), right(NULL), red_black(RED) //일반 insert때의 노드 생성
+	// {}
 
-	Node&	operator=(const Node& other)
-	{
-		value = other.value;
-		parent = other.value;
-		left = other.left;
-		right = other.right;
-		red_black = other.red_black;
-	}
+	// Node&	operator=(const Node& other)
+	// {
+	// 	value = other.value;
+	// 	parent = other.value;
+	// 	left = other.left;
+	// 	right = other.right;
+	// 	red_black = other.red_black;
+	// }
 
-	~Node() {};
+	// ~Node() {};
 };
 
 template <typename _pair>
@@ -161,9 +163,7 @@ class	tree_iterator{
 	reference	operator*() const
 	{	return (_node->value);	}
 	pointer		operator->() const
-	{
-		// printf("%p   %d\n", _node, _node->value.first);
-		return &(_node->value);	}
+	{	return &(_node->value);	}
 
 	bool	operator==(const tree_iterator& other) const
 	{	return _node == other._node;	}
@@ -178,9 +178,7 @@ class	const_tree_iterator{
 	typedef std::bidirectional_iterator_tag		iterator_category;
 	typedef	_pair								value_type;
 	typedef const value_type					const_value_type;	
-	// typedef	value_type&							reference;
 	typedef	const_value_type&					reference;
-	// typedef	value_type*							pointer;
 	typedef	const_value_type*					pointer;
 	typedef	std::ptrdiff_t						difference_type;
 	typedef	Node<value_type>*					node_pointer;
