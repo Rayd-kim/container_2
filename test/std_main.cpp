@@ -7,9 +7,9 @@
 	#include <vector>
 	namespace ft = std;
 #else
+	#include "../srcs/map/map.hpp"
 	#include <stack>
-	#include "./map/map.hpp"
-	#include "./vector/vector.hpp"
+	#include "../srcs/vector/vector.hpp"
 #endif
 
 #include <stdlib.h>
@@ -87,12 +87,12 @@ int main(int argc, char** argv) {
 	{
 		//NORMAL ! :P
 	}
-	printf("add\n");
+	
 	for (int i = 0; i < COUNT; ++i)
 	{
 		map_int.insert(ft::make_pair(rand(), rand()));
 	}
-	printf("end\n");
+
 	int sum = 0;
 	for (int i = 0; i < 10000; i++)
 	{

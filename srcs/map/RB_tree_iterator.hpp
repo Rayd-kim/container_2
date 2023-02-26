@@ -8,29 +8,11 @@
 
 template <typename _pair>
 struct Node {
-	// public:
 	_pair	value;
 	Node	*parent;
 	Node	*left;
 	Node	*right;
 	int		red_black;
-
-	// Node() : parent(NULL), left(NULL), right(NULL), red_black(BLACK)//leaf node(nil_node) 생성
-	// {}
-	
-	// Node(_pair pair) : value(pair), parent(NULL), left(NULL), right(NULL), red_black(RED) //일반 insert때의 노드 생성
-	// {}
-
-	// Node&	operator=(const Node& other)
-	// {
-	// 	value = other.value;
-	// 	parent = other.value;
-	// 	left = other.left;
-	// 	right = other.right;
-	// 	red_black = other.red_black;
-	// }
-
-	// ~Node() {};
 };
 
 template <typename _pair>

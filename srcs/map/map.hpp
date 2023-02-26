@@ -2,15 +2,14 @@
 #define	MAP_HPP
 
 #include "RB_tree.hpp"
-#include "../ft_library.hpp"
 
 namespace ft{
 
 template< typename Key, typename T, typename Compare = std::less<Key>,
 typename Allocator = std::allocator<ft::pair<const Key, T> > >
 class map{
-
 	public:
+	class	value_compare;
 
 	typedef	Key										key_type;
 	typedef	T										mapped_type;
@@ -23,19 +22,6 @@ class map{
 	typedef	typename Allocator::const_pointer		const_pointer;
 	typedef	typename Allocator::size_type			size_type;
 	typedef	typename Allocator::difference_type		difference_type;
-	// typedef	tree_iterator<value_type>				iterator;
-	// typedef	tree_iterator<const value_type>			const_iterator;
-	class value_compare{
-		protected:
-			Compare comp;
-			value_compare(Compare c) : comp(c) {}
-
-		public:		
-			bool operator()(const value_type& lhs, const value_type& rhs) const{
-				return comp(lhs.first, rhs.first);
-			}
-		friend	class map;
-	};
 	
 	typedef	RB_tree<value_type, value_compare, Allocator>	rb_tree;
 
@@ -47,14 +33,24 @@ class map{
 
 	private:
 
-	public:
 		rb_tree			_tree;
 		key_compare		_comp;
 		allocator_type	_alloc;
 
+	public:
+	class value_compare{
+		friend	class map;
+		protected:
+			Compare comp;
+			value_compare(Compare c) : comp(c) {}
+
+		public:		
+			bool operator()(const value_type& lhs, const value_type& rhs) const{
+				return comp(lhs.first, rhs.first);
+			}
+	};
+
 	//constructor & destructor
-	// map() : _tree() , _comp(Compare()), _alloc(Allocator()){};
-	~map() {};
 
 	explicit map(const Compare& comp = Compare(), const Allocator& alloc = Allocator() )
 	: _tree(rb_tree(comp, alloc)), _comp(comp), _alloc(alloc){};
@@ -71,6 +67,8 @@ class map{
 	}
 
 	map(const map& other) : _tree(rb_tree(other._tree)), _comp(other._comp), _alloc(other._alloc) {}
+	
+	~map() {};
 
 	map& operator=(const map& other)
 	{
@@ -81,9 +79,9 @@ class map{
 	}
 
 	// member function
-	allocator_type	get_allocator() const //Returns the allocator associated with the container
+	allocator_type	get_allocator() const
 	{	return (_alloc);	}
-	T& at(const Key& key) //if no such element exists, an exception of type std::out_of_range is thrown.
+	T& at(const Key& key)
 	{	return _tree.at(ft::make_pair(key, mapped_type())).second;	}
 	const T& at(const Key& key) const
 	{	return _tree.at(ft::make_pair(key, mapped_type())).second;	}
@@ -117,7 +115,7 @@ class map{
 			insert(*first++);
 	}
 	
-	void clear() //vector 랑 다르게 capacity는 없으니까, size만 0으로
+	void clear()
 	{	_tree.clear();	}
 	
 	void erase(iterator pos)
@@ -128,7 +126,7 @@ class map{
 		while (first != last)
 			erase(first++);
 	}
-	size_type erase(const Key& key) // Removes the element(if one exists) with the key equivalent to key.
+	size_type erase(const Key& key)
 	{	return _tree.erase(ft::make_pair(key, mapped_type()));	}
 	
 
@@ -139,7 +137,7 @@ class map{
 		ft::swap(_alloc, other._alloc);
 	}
 
-	size_type count(const Key& key) const //key에 해당하는 값이 몇개있는지. 0 or 1 중 하나임(중복을 허용하지 않기 때문에)
+	size_type count(const Key& key) const
 	{
 		return (_tree.count(ft::make_pair(key, mapped_type())));
 	}
@@ -207,12 +205,8 @@ class map{
 		return _begin;
 	}
 	
-
-	
-	
 	key_compare	key_comp() const
 	{	return _comp;	}
-
 	value_compare	value_comp() const
 	{	return value_compare(_comp);	}
 

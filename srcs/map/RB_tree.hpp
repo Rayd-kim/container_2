@@ -33,16 +33,7 @@ class RB_tree{
 	Alloc			_alloc;
 
 	public:
-	// RB_tree() : root(NULL), _comp(Compare()), _alloc(Allocator())
-	// {
-	// 	nil = create_nil_node();
-
-	// 	_begin = nil;
-	// 	_end = nil;
-	// 	_size = 0;
-	// }
-
-	RB_tree(const Compare& comp, const Allocator& alloc = Allocator()) : root(NULL), _comp(comp), _alloc(alloc)
+	RB_tree(const Compare& comp = key_compare(), const Allocator& alloc = Alloc()) : root(NULL), _comp(comp), _alloc(alloc)
 	{
 		nil = create_nil_node();
 

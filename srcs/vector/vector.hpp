@@ -32,18 +32,18 @@ namespace ft
 
 		public:
 
-			explicit vector(): _length(0), _capacity(0)
+			explicit vector(const allocator_type& _alloc = allocator_type()): _length(0), _capacity(0), alloc(_alloc)
 			{
 				_data = nullptr;
 			}
 			// n 만큼의 v를 가지는 벡터. n 만 들어오면 v는 기본값 T()가 된다. 속도향상을 위해 T의 복사생성자로 붙여넣기.
-			explicit vector(size_type n, const T& v = T()): _length(n), _capacity(n)
+			explicit vector(size_type n, const T& v = T(), const allocator_type& _alloc = allocator_type()): _length(n), _capacity(n), alloc(_alloc)
 			{
 				_data = alloc.allocate(n);
 				for (size_type i = 0; i < n; i++)
 					_data[i] = T(v);
 			}
-			vector(const vector &other): _length(other._length), _capacity(other._capacity)
+			vector(const vector &other): _length(other._length), _capacity(other._capacity), alloc(other.alloc)
 			{
 				this->_data = alloc.allocate(_capacity);
 				for (size_type i = 0; i < _length; i++)
@@ -51,8 +51,8 @@ namespace ft
 			}
 
 			template <class InputIterator>
-			vector (InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL)
-			: _length(0), _capacity(0)
+			vector (InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL, const allocator_type& _alloc = allocator_type())
+			: _length(0), _capacity(0), alloc(_alloc)
 			{
 				_data = alloc.allocate(_capacity);
 				for (; first != last; first++)
@@ -64,7 +64,6 @@ namespace ft
 				{
 					for (size_type i = 0; i < _length; i++)
 						alloc.destroy(&_data[i]);
-					// alloc.destroy(_data);
 					alloc.deallocate(_data, _capacity);
 				}
 			}
@@ -94,8 +93,8 @@ namespace ft
 				for (; first != last; first++)
 					push_back(*first);
 			}
-			// allocator_type	get_allocator() const
-			// {	return (Alloc);	}
+			allocator_type	get_allocator() const
+			{	return (alloc);	}
 			void	push_back(const T& element)
 			{
 				if (_capacity <= _length)
@@ -108,15 +107,12 @@ namespace ft
 					}
 					else
 					{
-						//이 과정 = reserve랑 같다..?
 						T *temp = alloc.allocate(_capacity * 2);
-						// alloc.construct(&temp[0], _data[0]); //_data 는  맨앞을 가리키고 있으니까 오류를 피하기위해 0은 따로.
 						for (size_type i = 0; i < _length; i++)
 						{
 							alloc.construct(&temp[i], _data[i]);
 							alloc.destroy(&_data[i]);
 						}
-						// alloc.destroy(_data);
 						alloc.deallocate(_data, _capacity);
 						_data = temp;
 						_capacity *= 2;
@@ -148,13 +144,11 @@ namespace ft
 				return _data[index];
 			}
 
-			T& operator[](size_type index) //index 번째 원소에 접근
+			T& operator[](size_type index)
 			{	return _data[index];	}
 			const T& operator[](size_type index) const
 			{return _data[index];}
 
-			//front back 함수는 비어있을 경우 segmentation fault 떠야한다.. cppreference에서 c.front() = *c.begin() 이다.
-			// iterator를 반환하도록 만들어야하나..?
 			T&	front()
 			{	return (_data[0]);	}
 			const_reference	front() const
@@ -176,7 +170,7 @@ namespace ft
 				return (_data);
 			}
 			
-			size_type	size() const //vector의 크기 (vector에 할당된 크기가 아닌 데이터가 저장된 크기)
+			size_type	size() const
 			{	return _length;	}
 			size_type	capacity() const
 			{	return _capacity;	}
@@ -230,7 +224,7 @@ namespace ft
 			{	return const_reverse_iterator(end()); }
 			const_reverse_iterator	rend() const
 			{	return const_reverse_iterator(begin());	}
-			iterator	insert(const_iterator pos, const T& value) //pos 값 이상할 때 체크하기
+			iterator	insert(const_iterator pos, const T& value)
 			{
 				size_type	pos_index = pos - begin();
 				insert(pos, 1, value);
@@ -356,8 +350,6 @@ bool	operator>=(const ft::vector<T, Alloc>& lhs, const ft::vector<T, Alloc>& rhs
 {	return !(lhs < rhs);	}
 template <typename T, typename Alloc>
 void	swap(ft::vector<T, Alloc>& lhs, ft::vector<T, Alloc>& rhs)
-{
-	lhs.swap(rhs);
-}
+{	lhs.swap(rhs);	}
 
 #endif

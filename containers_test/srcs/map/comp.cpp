@@ -22,16 +22,17 @@ int		main(void)
 {
 	_map	mp;
 
-	mp['a'] = 2.3;
-	mp['b'] = 1.4;
-	mp['c'] = 0.3;
-	mp['d'] = 4.2;
-	printSize(mp);
+	std::cout << mp.max_size() << std::endl;
+	// mp['a'] = 2.3;
+	// mp['b'] = 1.4;
+	// mp['c'] = 0.3;
+	// mp['d'] = 4.2;
+	// printSize(mp);
 
-	for (const_it it1 = mp.begin(); it1 != mp.end(); ++it1)
-		for (const_it it2 = mp.begin(); it2 != mp.end(); ++it2)
-			ft_comp(mp, it1, it2);
+	// for (const_it it1 = mp.begin(); it1 != mp.end(); ++it1)
+	// 	for (const_it it2 = mp.begin(); it2 != mp.end(); ++it2)
+	// 		ft_comp(mp, it1, it2);
 
-	printSize(mp);
+	// printSize(mp);
 	return (0);
 }
