@@ -161,7 +161,7 @@ namespace ft
 					return (nullptr);
 				return (_data);
 			}
-			const_reference	data() const
+			const_pointer	data() const
 			{
 				if (_length == 0)
 					return (nullptr);
