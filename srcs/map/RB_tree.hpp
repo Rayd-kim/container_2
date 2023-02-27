@@ -22,15 +22,14 @@ class RB_tree{
 	typedef	typename Allocator::template rebind<node_type>::other	Alnode;
 
 	private:
-		size_type	_size;
-
-	node_pointer	root;
-	node_pointer	nil;
-	node_pointer	_begin;
-	node_pointer	_end;
-	Alnode			real_alloc;
-	key_compare		_comp;
-	Alloc			_alloc;
+		size_type		_size;
+		node_pointer	root;
+		node_pointer	nil;
+		node_pointer	_begin;
+		node_pointer	_end;
+		Alnode			real_alloc;
+		key_compare		_comp;
+		Alloc			_alloc;
 
 	public:
 	RB_tree(const Compare& comp = key_compare(), const Allocator& alloc = Alloc()) : root(NULL), _comp(comp), _alloc(alloc)
@@ -512,11 +511,7 @@ class RB_tree{
 			throw(std::out_of_range("Map"));
 	}
 	size_type	max_size() const
-	{
-		// return std::numeric_limits<size_type>::max();
-		// return real_alloc.max_size();
-		return (std::numeric_limits<size_type>::max() / sizeof(node_type));
-	}
+	{	return (std::numeric_limits<size_type>::max() / sizeof(node_type));	}
 	
 	iterator	find(const value_type& value, iterator begin, iterator end)
 	{

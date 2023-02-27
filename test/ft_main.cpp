@@ -80,12 +80,12 @@ int main(int argc, char** argv) {
 		{
 			const int idx = rand() % COUNT;
 			vector_buffer.at(idx);
-			std::cerr << "Error: THIS VECTOR SHOULD BE EMPTY!!" <<std::endl;
 		}
 	}
 	catch(const std::exception& e)
 	{
 		//NORMAL ! :P
+		std::cerr << "Error: THIS VECTOR SHOULD BE EMPTY!!" <<std::endl;
 	}
 	
 	for (int i = 0; i < COUNT; ++i)

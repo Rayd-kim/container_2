@@ -27,29 +27,29 @@ class	tree_iterator{
 
 	private:
 	node_pointer		_node;
-	node_pointer		_nil;
-	node_pointer		_root;
 
 	public:
+	node_pointer		_nil;
+	node_pointer		_root;
 	
 
 	public:
 	tree_iterator() : _node(), _nil(), _root() {}
 	tree_iterator(node_pointer node, node_pointer nil, node_pointer root): _node(node), _nil(nil), _root(root) {}
 	
-	// tree_iterator(const tree_iterator& other) : _node(other._node), _nil(other._nil), _root(other._root) {}
-	~tree_iterator() {}
+	// tree_iterator(const tree_iterator& other) : _node(other.base()), _nil(other._nil), _root(other._root) {}
+	// ~tree_iterator() {}
 	
 	node_pointer	base() const
 	{	return (_node); }
 
-	tree_iterator&	operator=(const tree_iterator& other)
-	{
-		_node = other._node;
-		_nil = other._nil;
-		_root = other._root;
-		return (*this);
-	}
+	// tree_iterator&	operator=(const tree_iterator& other)
+	// {
+	// 	_node = other._node;
+	// 	_nil = other._nil;
+	// 	_root = other._root;
+	// 	return (*this);
+	// }
 	tree_iterator&	operator++()
 	{
 		if (_node == _nil)
@@ -167,28 +167,29 @@ class	const_tree_iterator{
 
 	private:
 	node_pointer		_node;
-	node_pointer		_nil;
-	node_pointer		_root;
 
 	public:
+	node_pointer		_nil;
+	node_pointer		_root;
 	
 	public:
 	const_tree_iterator() : _node(), _nil(), _root() {}
 	const_tree_iterator(node_pointer node, node_pointer nil, node_pointer root): _node(node), _nil(nil), _root(root) {}
-	
+	// const_tree_iterator(const const_tree_iterator& other) : _node(other.base()), _nil(other._nil), _root(other._root) {}
+	// ~const_tree_iterator() {}
+
 	const_tree_iterator(const tree_iterator<_pair>& other) : _node(other.base()), _nil(other._nil), _root(other._root) {}
-	~const_tree_iterator() {}
 	
 	node_pointer	base() const
 	{	return (_node); }
 
-	const_tree_iterator&	operator=(const const_tree_iterator& other)
-	{
-		_node = other._node;
-		_nil = other._nil;
-		_root = other._root;
-		return (*this);
-	}
+	// const_tree_iterator&	operator=(const const_tree_iterator& other)
+	// {
+	// 	_node = other._node;
+	// 	_nil = other._nil;
+	// 	_root = other._root;
+	// 	return (*this);
+	// }
 	const_tree_iterator&	operator++()
 	{
 		if (_node == _nil)

@@ -51,12 +51,11 @@ class map{
 	};
 
 	//constructor & destructor
-
 	explicit map(const Compare& comp = Compare(), const Allocator& alloc = Allocator() )
 	: _tree(rb_tree(comp, alloc)), _comp(comp), _alloc(alloc){};
 	
 	template<class InputIt>
-	map(InputIt first, InputIt last, const Compare& comp = Compare(), const Allocator& alloc = Allocator())
+	map(InputIt first, InputIt last, const Compare& comp = Compare(), const Allocator& alloc = Allocator() )
 	: _tree(rb_tree(comp, alloc)), _comp(comp), _alloc(alloc)
 	{
 		while (first != last)
@@ -67,7 +66,6 @@ class map{
 	}
 
 	map(const map& other) : _tree(rb_tree(other._tree)), _comp(other._comp), _alloc(other._alloc) {}
-	
 	~map() {};
 
 	map& operator=(const map& other)
@@ -104,7 +102,7 @@ class map{
 	{	return (_tree.insert_node(value));	}
 	iterator insert(iterator pos, const value_type& value)
 	{
-		iterator tmp = pos;
+		(void)pos;
 		return _tree.insert_node(value).first;
 	}
 
@@ -129,7 +127,6 @@ class map{
 	size_type erase(const Key& key)
 	{	return _tree.erase(ft::make_pair(key, mapped_type()));	}
 	
-
 	void swap(map& other)
 	{
 		_tree.swap(other._tree);
