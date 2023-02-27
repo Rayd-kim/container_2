@@ -49,7 +49,6 @@ namespace ft{
 
 		template <typename U>
 		reverse_iterator (const reverse_iterator<U>& other): _iter(other.base()) {}
-		~reverse_iterator() {}
 		iterator_type	base() const 
 		{	return (_iter); }
 
@@ -143,7 +142,7 @@ namespace ft{
 	{	return rhs.base() - lhs.base();	}
 
 
-	template <bool, typename T = void>
+	template <bool, typename T = void >
 	struct enable_if {};
 
 	template <typename T>

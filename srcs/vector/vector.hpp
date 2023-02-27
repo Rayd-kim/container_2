@@ -4,7 +4,6 @@
 #include <iostream>
 #include <memory>
 #include <exception>
-#include <type_traits>
 #include "../ft_library.hpp"
 
 namespace ft
@@ -36,7 +35,6 @@ namespace ft
 			{
 				_data = nullptr;
 			}
-			// n 만큼의 v를 가지는 벡터. n 만 들어오면 v는 기본값 T()가 된다. 속도향상을 위해 T의 복사생성자로 붙여넣기.
 			explicit vector(size_type n, const T& v = T(), const allocator_type& _alloc = allocator_type()): _length(n), _capacity(n), alloc(_alloc)
 			{
 				_data = alloc.allocate(n);
